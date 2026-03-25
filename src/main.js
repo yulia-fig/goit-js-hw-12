@@ -57,29 +57,30 @@ form.addEventListener("submit", async event => {
 
 // ====== ОБРОБНИК Load More ======
 loadMoreBtn.addEventListener("click", async () => {
-  page++;
-  showLoader();
+  page++; // переходимо на наступну сторінку
+
+  hideLoadMoreButton(); // ховаємо кнопку під час запиту
+  showLoader();         // показуємо лоадер
 
   try {
-    const data = await getImagesByQuery(query, page);
-    
-    createGallery(data.hits);
+    const data = await getImagesByQuery(query, page); // запит до API
+    createGallery(data.hits); // додаємо картинки до галереї
+
     // ====== ПРОКРУЧУВАННЯ СТОРІНКИ ======
-    // Отримуємо висоту першої картки галереї
     const cardHeight = document.querySelector(".gallery-item")?.getBoundingClientRect().height || 0;
-    // Плавно прокручуємо на дві висоти картки
-    window.scrollBy({ top: cardHeight * 2, behavior: "smooth" });
+    window.scrollBy({ top: cardHeight * 2, behavior: "smooth" }); // плавна прокрутка
 
     // Перевірка кінця колекції
     if (page * PER_PAGE >= totalHits) {
-      hideLoadMoreButton();
       iziToast.info({ message: "We're sorry, but you've reached the end of search results." });
+      hideLoadMoreButton(); // ховаємо кнопку, бо більше картинок немає
     } else {
-      showLoadMoreButton();
+      showLoadMoreButton(); // показуємо кнопку, бо ще є картинки
     }
+
   } catch (error) {
     iziToast.error({ message: "Something went wrong" });
   } finally {
-    hideLoader();
+    hideLoader(); // ховаємо лоадер у будь-якому випадку
   }
 });
